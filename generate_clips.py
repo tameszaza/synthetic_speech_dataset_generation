@@ -205,9 +205,12 @@ if args.model == "VITS":
     sr = 16000
 
     cnt = 0
-    for i, text in tqdm(zip(ids, texts), total=len(ids), desc="Generating clips"):
+    for idx, (i, text) in enumerate(tqdm(zip(ids, texts), total=len(ids), desc="Generating clips")):
         audio = model.generate_speech(txt=text, speaker_id=i, noise_bounds=(0.667, 1.5),
-                                      duration_bounds=(0.8, 1.2) if args.speaking_speed == 1.0 else (args.speaking_speed, args.speaking_speed))
+                                    duration_bounds=(0.8, 1.2) if args.speaking_speed == 1.0 else (args.speaking_speed, args.speaking_speed))
+    # Save clips with line index in filename
+    
+
         if args.truncate_at_pause:
             breaks = get_silence_times(audio, min_start = args.pause_min_start, max_end=args.pause_max_end)
             if breaks and audio is not None:
@@ -223,7 +226,8 @@ if args.model == "VITS":
         
         # Save clips
         if audio is not None:
-            write(os.path.join(args.output_dir, uuid.uuid4().hex + ".wav"), sr, audio)
+            output_filename = f"clip_{idx + 1}.wav"  # Use line index for file naming
+            write(os.path.join(args.output_dir, output_filename), sr, audio)
             cnt += 1
 
     print(f"{cnt} clips generated!")
