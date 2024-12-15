@@ -1,2 +1,8 @@
-Hello teester
-I am Tames
+ml@ml-System-Product-Name:~/Documents/voice$ git pull --force
+Updating 2c9f8f0..b1db155
+error: Your local changes to the following files would be overwritten by merge:
+	mGANs1_waveform_linguist_o1.ipynb
+	training_500.log
+Please commit your changes or stash them before you merge.
+Aborting
+ml@ml-System-Product-Name:~/Documents/voice$ 

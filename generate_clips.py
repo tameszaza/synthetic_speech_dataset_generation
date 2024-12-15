@@ -187,8 +187,9 @@ if args.model == "VITS":
     )
 
     # Get speaker ids and text for each generation
+    # Get speaker ids and text for each generation
     if args.input_file == "":
-        ids = generate_speaker_ids(args.N, n_speakers=109, n_mix=5)  #for VITS model trained on VCTK dataset
+        ids = generate_speaker_ids(args.N, n_speakers=109, n_mix=5)  # for VITS model trained on VCTK dataset
         texts = []
         for i in range(len(ids)):
             text = re.sub("<any>", lambda x: random.choice(en_words), args.text)
@@ -197,9 +198,10 @@ if args.model == "VITS":
             texts.append(text)
     else:
         with open(args.input_file, 'r') as f:
-            texts = f.readlines()
-            texts = [i.strip() for i in texts]
-        ids = generate_speaker_ids(len(texts), n_speakers=109, n_mix=5)  #for VITS model trained on VCTK dataset
+            file_lines = f.readlines()
+            texts = [line.strip() for line in file_lines for _ in range(args.N)]  # Repeat each line `--N` times
+            ids = generate_speaker_ids(len(texts), n_speakers=109, n_mix=5)  # Ensure enough speaker IDs
+    #for VITS model trained on VCTK dataset
 
     # Generate audio
     sr = 16000
@@ -226,8 +228,13 @@ if args.model == "VITS":
         
         # Save clips
         if audio is not None:
-            output_filename = f"clip_{idx + 1}.wav"  # Use line index for file naming
-            write(os.path.join(args.output_dir, output_filename), sr, audio)
+            line_index = idx // args.N + 1  # Original line number from input file
+            repetition_index = idx % args.N + 1  # Current repetition number 
+            output_filename = f"clip_{line_index}_{repetition_index}.flac"  # Save as .flac format
+            output_path = os.path.join(args.output_dir, output_filename)
+            audio_tensor = torch.tensor(audio, dtype=torch.float32).unsqueeze(0) / 32767.0  # Normalize to [-1, 1]
+            torchaudio.save(output_path, audio_tensor, sr, format="flac")
+
             cnt += 1
 
     print(f"{cnt} clips generated!")
