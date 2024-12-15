@@ -1,3 +1,4 @@
+python generate_clips.py --model VITS --input_file text.txt --output_dir generated_clips --enable_gpu --N 5
 # Readme
 
 This repository contains text-to-speech (TTS) models and utilities designed produce synthetic training datasets for other speech-related models (e.g., [openWakeWord](https://github.com/dscripka/openWakeWord)).
