@@ -230,10 +230,10 @@ if args.model == "VITS":
         if audio is not None:
             line_index = idx // args.N + 1  # Original line number from input file
             repetition_index = idx % args.N + 1  # Current repetition number 
-            output_filename = f"clip_{line_index}_{repetition_index}.flac"  # Save as .flac format
+            output_filename = f"clip_{line_index}_{repetition_index}.wav"  # Save as .flac format
             output_path = os.path.join(args.output_dir, output_filename)
             audio_tensor = torch.tensor(audio, dtype=torch.float32).unsqueeze(0) / 32767.0  # Normalize to [-1, 1]
-            torchaudio.save(output_path, audio_tensor, sr, format="flac")
+            torchaudio.save(output_path, audio_tensor, sr, format="wav")
 
             cnt += 1
 
