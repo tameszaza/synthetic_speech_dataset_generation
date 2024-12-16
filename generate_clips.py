@@ -208,9 +208,15 @@ if args.model == "VITS":
 
     cnt = 0
     for idx, (i, text) in enumerate(tqdm(zip(ids, texts), total=len(ids), desc="Generating clips")):
-        audio = model.generate_speech(txt=text, speaker_id=i, noise_bounds=(0.667, 1.5),
+        try:
+            audio = model.generate_speech(txt=text, speaker_id=i, noise_bounds=(0.667, 1.5),
                                     duration_bounds=(0.8, 1.2) if args.speaking_speed == 1.0 else (args.speaking_speed, args.speaking_speed))
     # Save clips with line index in filename
+        except KeyboardInterrupt :
+            raise(KeyboardInterrupt)
+        except Exception as e:
+            print(f"Error generating speech for text '{text}': {e}")
+            continue
     
 
         if args.truncate_at_pause:
